@@ -765,9 +765,9 @@
           let player_svg = entry_player_graph.append("g").attr("transform", translate(margin, margin)).selectAll("text").data([player]).enter();
 
           player_svg.append("text").attr("transform", translate(margin + 94, margin)).attr("id", "entry_player_name_text").text(d => d.이름);
-          player_svg.append("image").attr("href", "image/" + player.이름 + ".jpg")
+          player_svg.append("image").attr("href", "https://raw.githubusercontent.com/GodDrinkTeJAVA/GodDrinkTeJAVA.github.io/master/image/" + player.이름 + ".jpg")
             .on("error", function () {
-              d3.select(this).attr("href", "image/default.png").attr("width", 94);
+              d3.select(this).attr("href", "https://raw.githubusercontent.com/GodDrinkTeJAVA/GodDrinkTeJAVA.github.io/master/image/default.png").attr("width", 94);
             });
 
 
