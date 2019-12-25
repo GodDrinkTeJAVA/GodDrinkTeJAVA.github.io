@@ -492,6 +492,8 @@
                         .style("fill", d => teamColor(d.data.팀))
                         .on("click", sub_graph_update_for_treemap)
                         .on('mouseover', d => {
+                          d3.select("#rect" + d.data.이름).style("stroke", "white")
+                                                          .style("stroke-width", 3);
 
                           const tooltipText = formatTooltip(d);
                           tooltip.transition().duration(200)
@@ -503,7 +505,7 @@
                                 .style('left', (d3.event.pageX + 20) + 'px');
                         })
                         .on('mouseout', d => {
-                          d3.select(this).style("stroke", null)
+                          d3.select("#rect" + d.data.이름).style("stroke", null)
 
                           tooltip.transition().duration(500)
                                 .style('display', 'none');
@@ -540,7 +542,6 @@
                                 .style('left', (d3.event.pageX + 20) + 'px');
                           })
                         .on('mouseout', d => {
-                          d3.select(this).style("stroke", null)
 
                           tooltip.transition().duration(500)
                                 .style('display', 'none');
@@ -664,9 +665,11 @@
               .paddingInner(1)
               (root);
 
+          d3.selectAll("#treemap_tooltip").remove();
+
           let tooltip = d3.select('body')
                   .append('div')
-                  .attr('id', 'tooltip')
+                  .attr('id', 'treemap_tooltip')
                   .attr('width', 60 + 'px')
                   .attr('height', 40 + 'px')
                   .style('z-index', 10)
@@ -688,6 +691,8 @@
                         .style("fill", d => teamColor(d.data.팀))
                         .on("click", sub_graph_update_for_treemap)
                         .on('mouseover', d => {
+                          d3.select("#rect" + d.data.이름).style("stroke", "white")
+                                                          .style("stroke-width", 3);
 
                           const tooltipText = formatTooltip(d);
                           tooltip.transition().duration(200)
@@ -699,7 +704,7 @@
                                 .style('left', (d3.event.pageX + 20) + 'px');
                         })
                         .on('mouseout', d => {
-                          d3.select(this).style("stroke", null)
+                          d3.select("#rect" + d.data.이름).style("stroke", null)
 
                           tooltip.transition().duration(500)
                                 .style('display', 'none');
@@ -735,7 +740,6 @@
                                 .style('left', (d3.event.pageX + 20) + 'px');
                         })
                         .on('mouseout', d => {
-                          d3.select(this).style("stroke", null)
 
                           tooltip.transition().duration(500)
                                 .style('display', 'none');
@@ -765,9 +769,9 @@
           let player_svg = entry_player_graph.append("g").attr("transform", translate(margin, margin)).selectAll("text").data([player]).enter();
 
           player_svg.append("text").attr("transform", translate(margin + 94, margin)).attr("id", "entry_player_name_text").text(d => d.이름);
-          player_svg.append("image").attr("href", "https://raw.githubusercontent.com/GodDrinkTeJAVA/GodDrinkTeJAVA.github.io/master/image/" + player.이름 + ".jpg")
+          player_svg.append("image").attr("href", "image/" + player.이름 + ".jpg")
             .on("error", function () {
-              d3.select(this).attr("href", "https://raw.githubusercontent.com/GodDrinkTeJAVA/GodDrinkTeJAVA.github.io/master/image/default.png").attr("width", 94);
+              d3.select(this).attr("href", "image/default.png").attr("width", 94);
             });
 
 
