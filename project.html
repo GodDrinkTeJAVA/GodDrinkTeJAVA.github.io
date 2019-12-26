@@ -438,7 +438,8 @@
                       .parentId(d => d.팀)
                       (tier_data);
             root.sum(d => Number(d['안타']));
-            
+            root.sort((a, b) => b.value - a.value);
+
           }
           else {
             let tier_data = data[1].filter(item => item.포지션 === d3.select(this).data()[0].포지션);
@@ -458,15 +459,16 @@
             root = d3.stratify()
                       .id(d => d.이름)
                       .parentId(d => d.팀)
-                      (tier_data);
+                      (tier_data).sort((a, b) => a.value - b.value);
             root.sum(d => Number(d['WAR']));
+            root.sort((a, b) => b.value - a.value);
           }
 
 
           d3.treemap()
               .size([width - margin, height - margin])
               .paddingInner(1)
-              (root);
+              (root).sort();
 
           let tooltip = d3.select('body')
                   .append('div')
@@ -490,6 +492,12 @@
                         .attr("width", d => d.x1 - d.x0)
                         .attr("height", d => d.y1 - d.y0)
                         .style("fill", d => teamColor(d.data.팀))
+                        .style("opacity", d => {
+                          if (d3.select(this).data()[0].순 === d.data.순) {
+                            return 0.7;
+                          }
+                          return 1;
+                        })
                         .on("click", sub_graph_update_for_treemap)
                         .on('mouseover', d => {
                           d3.select("#rect" + d.data.이름).style("stroke", "white")
@@ -552,7 +560,7 @@
 
 
           // 만일 select의 값이 바뀌면 호출되어서 transition을 한다
-          select_stat.on("change", () => sub_treemap_update_on_select(tier_data));
+          select_stat.on("change", () => sub_treemap_update_on_select());
 
         }
 
@@ -562,60 +570,31 @@
                 stat_item = d3.select("#substitute-treemap-select").property('value');
                 value = d.data[stat_item],
                 tooltipText = `
-                    ${name} <br>
+                    ${d.data.팀} ${name}<br>
                     <span>${stat_item}:</span> ${value} <br>`;
 
           return tooltipText;
         }
 
 
-        function sub_treemap_update_on_select(tier_data) {
+        function sub_treemap_update_on_select() {
           let width = 800;
           let height = 750;
           let margin = 20;
+
+          d3.select("#substitute-treemap-svg").select("g").remove();
+          let treemap_view = d3.select("#substitute-treemap-svg").attr("width", width).attr("height", height)
+                                              .append("g");
 
           let select_stat = d3.select("#substitute-treemap-select");
           let stat_item = select_stat.property('value');
           console.log(stat_item);
 
-          /* 왠지 안돼서 일단 놔두고 그냥 새로 만들기 할거임
-          let root = d3.stratify()
-                        .id(d => d.이름)
-                        .parentId(d => d.팀)
-                        (tier_data);
-          root.sum(d => Number(d[stat_item]));
-
-          d3.treemap()
-            .size([width - margin])
-            .paddingInner(1)
-            (root);
-          let treemap_view = d3.select("#substitute-treemap-svg").select("g");
-
-
-          treemap_view.selectAll("rect")
-                        .data(root.leaves(), d => d.data.이름)
-                        .transition().duration(1000)
-                        .attr("x", d => d.x0)
-                        .attr("y", d => d.y0)
-                        .attr("width", d => d.x1 - d.x0)
-                        .attr("height", d => d.y1 - d.y0)
-                        .style("fill", d => teamColor(d.data.팀));
-
-          treemap_view.selectAll("text")
-                        .data(root.leaves())
-                        .transition().duration(1000)
-                        .attr("x", d => d.x0 + 10)
-                        .attr("y", d => d.y0 + 15)
-          */
-          d3.select("#substitute-treemap-svg").select("g").remove();
-          let treemap_view = d3.select("#substitute-treemap-svg").attr("width", width).attr("height", height)
-                                              .append("g");
-
           let root;
-          //let tier_data;
+          let tier_data;
           if (is_hitter) {
-            /*
-            tier_data = data[0].filter(item => item.포지션 === d3.select(this).data()[0].포지션);
+            
+            tier_data = data[0].filter(item => item.포지션 === d3.select("#entry_player_name_text").data()[0].포지션);
             
             tier_data.push({이름: "top", 팀: null})
             tier_data.push({이름: "한화", 팀: "top"});
@@ -628,7 +607,7 @@
             tier_data.push({이름: "NC", 팀: "top"});
             tier_data.push({이름: "롯데", 팀: "top"});
             tier_data.push({이름: "키움", 팀: "top"});
-            */
+            
 
 
             root = d3.stratify()
@@ -636,11 +615,12 @@
                       .parentId(d => d.팀)
                       (tier_data);
             root.sum(d => Number(d[stat_item]));
-            
+            root.sort((a, b) => b.value - a.value);
+
           }
           else {
-            /*
-            let tier_data = data[1].filter(item => item.포지션 === d3.select(this).data()[0].포지션);
+            
+            let tier_data = data[1].filter(item => item.포지션 === d3.select("#entry_player_name_text").data()[0].포지션);
             
             tier_data.push({이름: "top", 팀: null})
             tier_data.push({이름: "한화", 팀: "top"});
@@ -653,13 +633,15 @@
             tier_data.push({이름: "NC", 팀: "top"});
             tier_data.push({이름: "롯데", 팀: "top"});
             tier_data.push({이름: "키움", 팀: "top"});
-            */
+            
 
             root = d3.stratify()
                       .id(d => d.이름)
                       .parentId(d => d.팀)
                       (tier_data);
             root.sum(d => Number(d[stat_item]));
+            root.sort((a, b) => b.value - a.value);
+
           }
 
 
@@ -692,6 +674,12 @@
                         .attr("width", d => d.x1 - d.x0)
                         .attr("height", d => d.y1 - d.y0)
                         .style("fill", d => teamColor(d.data.팀))
+                        .style("opacity", d => {
+                          if (d3.select("#entry_player_name_text").data()[0].순 === d.data.순) {
+                            return 0.7;
+                          }
+                          return 1;
+                        })
                         .on("click", sub_graph_update_for_treemap)
                         .on('mouseover', d => {
                           d3.select("#rect" + d.data.이름).style("stroke", "white")
@@ -775,9 +763,9 @@
           let player_svg = entry_player_graph.append("g").attr("transform", translate(margin, margin)).selectAll("text").data([player]).enter();
 
           player_svg.append("text").attr("transform", translate(margin + 94, margin)).attr("id", "entry_player_name_text").text(d => d.이름);
-          player_svg.append("image").attr("href", "image/" + player.이름 + ".jpg")
+          player_svg.append("image").attr("href", "https://raw.githubusercontent.com/GodDrinkTeJAVA/GodDrinkTeJAVA.github.io/master/image/" + player.이름 + ".jpg")
             .on("error", function () {
-              d3.select(this).attr("href", "image/default.png").attr("width", 94);
+              d3.select(this).attr("href", "https://raw.githubusercontent.com/GodDrinkTeJAVA/GodDrinkTeJAVA.github.io/master/image/default.png").attr("width", 94);
             });
 
 
@@ -877,9 +865,9 @@
           let player_svg = sub_player_graph.append("g").attr("transform", translate(margin, margin)).selectAll("text").data([player]).enter();
 
           player_svg.append("text").attr("transform", translate(margin + 94, margin)).attr("id", "substitute_player_name_text").text(d => d.이름);
-          player_svg.append("image").attr("href", "image/" + player.이름 + ".jpg")
+          player_svg.append("image").attr("href", "https://raw.githubusercontent.com/GodDrinkTeJAVA/GodDrinkTeJAVA.github.io/master/image/" + player.이름 + ".jpg")
             .on("error", function () {
-              d3.select(this).attr("href", "image/default.png").attr("width", 94);
+              d3.select(this).attr("href", "https://raw.githubusercontent.com/GodDrinkTeJAVA/GodDrinkTeJAVA.github.io/master/image/default.png").attr("width", 94);
             });
 
 
@@ -1032,7 +1020,7 @@
           let radargraph = d3.select("#gross-radar-graph-svg");
 
           let radaroptions = {
-              w: 300,
+              w: 250,
               h: 200,
               margin: { top: 30, right: 30, bottom: 30, left: 30 },
               levels: 3,
